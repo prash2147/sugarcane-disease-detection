@@ -29,10 +29,10 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 class_names = train_ds.class_names
 print("Classes:", class_names)
 
-# ✅ Normalize
+# Normalize
 normalization_layer = layers.Rescaling(1./255)
 
-# ✅ Data Augmentation (NEW 🔥)
+# Data Augmentation 
 data_augmentation = keras.Sequential([
     layers.RandomFlip("horizontal"),
     layers.RandomRotation(0.2),
@@ -44,7 +44,7 @@ data_augmentation = keras.Sequential([
 train_ds = train_ds.map(lambda x, y: (data_augmentation(normalization_layer(x)), y))
 val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
-# ✅ Performance optimization
+# performance optimization
 train_ds = train_ds.prefetch(buffer_size=tf.data.AUTOTUNE)
 val_ds = val_ds.prefetch(buffer_size=tf.data.AUTOTUNE)
 
@@ -55,7 +55,6 @@ base_model = tf.keras.applications.MobileNetV2(
     weights='imagenet'
 )
 
-# ✅ Freeze some layers (IMPORTANT FIX)
 for layer in base_model.layers[:-20]:
     layer.trainable = False
 
@@ -63,9 +62,9 @@ for layer in base_model.layers[:-20]:
 model = keras.Sequential([
     base_model,
     layers.GlobalAveragePooling2D(),
-    layers.BatchNormalization(),   # NEW
+    layers.BatchNormalization(),   
     layers.Dense(128, activation='relu'),
-    layers.Dropout(0.4),           # Increased
+    layers.Dropout(0.4),           
     layers.Dense(len(class_names), activation='softmax')
 ])
 
@@ -75,7 +74,7 @@ model.compile(
     metrics=['accuracy']
 )
 
-# ✅ Early stopping (NEW 🔥)
+# Early stopping 
 early_stop = keras.callbacks.EarlyStopping(
     monitor='val_loss',
     patience=5,
@@ -85,7 +84,7 @@ early_stop = keras.callbacks.EarlyStopping(
 history = model.fit(
     train_ds,
     validation_data=val_ds,
-    epochs=30,   # increased but controlled by early stopping
+    epochs=30,   
     callbacks=[early_stop]
 )
 

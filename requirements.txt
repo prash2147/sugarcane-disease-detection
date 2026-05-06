@@ -96,3 +96,11 @@ xdg==5
 xkit==0.0.0
 xlrd==2.0.1
 yt-dlp==2024.4.9
+
+
+Flask
+gunicorn
+tensorflow
+numpy
+pillow
+h5py
